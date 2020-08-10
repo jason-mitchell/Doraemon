@@ -9,6 +9,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./mechatronic.obj" \
 "./serial.obj" \
 "./timer.obj" \
 "../lnk_msp430g2231.cmd" \
@@ -154,8 +155,8 @@ HOPPER_CONTROLLER.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "serial.obj" "timer.obj" 
-	-$(RM) "main.d" "serial.d" "timer.d" 
+	-$(RM) "main.obj" "mechatronic.obj" "serial.obj" "timer.obj" 
+	-$(RM) "main.d" "mechatronic.d" "serial.d" "timer.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

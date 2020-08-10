@@ -5,6 +5,7 @@
 #include <msp430.h> 
 #include "serial.h"
 #include "timer.h"
+#include "mechatronic.h"
 
 
 
@@ -12,7 +13,10 @@
 // Definitions
 //------------
 #define HEARTBEAT_LED BIT0
-#define ERROR_LED BIT1
+//#define ERROR_LED BIT1
+//#define HOPPER_MOTOR_FWD BIT3
+//#define HOPPER_MOTOR_REV BIT4
+//#define VIBRATOR_MOTOR BIT5
 
 
 // Variables
@@ -39,12 +43,12 @@ int main(void){
 
 	// Configure ports
 	//------------------
-	P1DIR |= HEARTBEAT_LED;
-	P1DIR |= ERROR_LED;
-	P1DIR |= BIT2;                              // P1.2 is output for PWM from Timer module
-	P1DIR |= TxD;
-	P1OUT &= ~HEARTBEAT_LED;
-	P1OUT &= ~ERROR_LED;
+	P1DIR = 0x7F;                               // P1.0 thru P1.6 OUTPUTS
+	P1OUT = 0x00;
+	P2SEL &= 0x3F;                             // P2.6 and P2.7 -> GPIO mode
+	P2DIR = 0x00;
+	P2REN = 0xC0;
+	P1REN = 0x80;
 	P1OUT |= TxD;                               // Transmit line always high
 
     P1IES = 0x80;                               // This register MUST be set up
@@ -55,9 +59,9 @@ int main(void){
     //----------------------------------
     P1SEL |= BIT2;                              // P1.2 to TA0.1
     TACTL = TACLR;                              // Clear Timer
-    CCR0 = 50;                                  // PWM Period
+    CCR0 = 120;                                  // PWM Period
     CCTL1 = OUTMOD_7;                           // CCR1 reset/set
-    CCR1 = 25;                                  // CCR1 PWM duty cycle 50% is given if this value = CCR0 / 2
+    CCR1 = 0;                                  // CCR1 PWM duty cycle = 0
     TACTL = TASSEL_2 + MC_1 + ID_3;             // SMCLK, up mode, timer running, divide input clock by 8
 
 	// Configure WDT as systick timer
@@ -67,14 +71,26 @@ int main(void){
 	IE1 |= WDTIE;                               // Enable WDT interrupt
 	__enable_interrupt();                       // Enable System interrupts
 	InitTimerSystem();
+
 	// Set up start-up conditions
-	Delay(100);
 	P1OUT |= ERROR_LED;                         // ERROR LED is on
+	P1OUT |= HEARTBEAT_LED;
+	Delay(1500);
 	TxString("\r\nHopper Mechatronic controller v1.0\r\nBy Sonikku\r\nAugust 2020");
+	P1OUT &= ~ERROR_LED;
+	P1OUT &= ~HEARTBEAT_LED;
+
+
+	//P1OUT |=HOPPER_MOTOR_REV;
+	Delay(500);
+	// Quick-test limit switch
 
 	// Do not escape main function...
 	for(;;){
+
+
 	 Delay(500);
+	 TxByte(P2IN);
 	 P1OUT ^= HEARTBEAT_LED;
 	 if (rxbufptr > 5){
 	     rxbufptr = 0;
@@ -89,7 +105,15 @@ int main(void){
 	     }
 	 }
 
+
+	DoServoOperation(OPEN_FULLY);
+	//P1OUT |= VIBRATOR_MOTOR;
+	Delay(1500);
+	P1OUT &= ~VIBRATOR_MOTOR;
+	DoServoOperation(CLOSE_FULLY);
+	Delay(1500);
 	}
+
 }
 
 // Port 1 Interrupt

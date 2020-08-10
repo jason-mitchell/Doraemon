@@ -8,31 +8,37 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../main.c \
+../mechatronic.c \
 ../serial.c \
 ../timer.c 
 
 C_DEPS += \
 ./main.d \
+./mechatronic.d \
 ./serial.d \
 ./timer.d 
 
 OBJS += \
 ./main.obj \
+./mechatronic.obj \
 ./serial.obj \
 ./timer.obj 
 
 OBJS__QUOTED += \
 "main.obj" \
+"mechatronic.obj" \
 "serial.obj" \
 "timer.obj" 
 
 C_DEPS__QUOTED += \
 "main.d" \
+"mechatronic.d" \
 "serial.d" \
 "timer.d" 
 
 C_SRCS__QUOTED += \
 "../main.c" \
+"../mechatronic.c" \
 "../serial.c" \
 "../timer.c" 
 

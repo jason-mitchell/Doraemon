@@ -5,12 +5,13 @@
  *      Author: jasonmitchell
  */
 #include <msp430.h>
+#include "timer.h"
 #define HEARTBEAT_LED BIT0
 #define SCALING_CONSTANT 16
 
 
 unsigned int TIMERCOUNT;
-unsigned int SCALER;
+//unsigned int TIME_MEASURE;
 
 
 
@@ -53,6 +54,7 @@ void InitTimerSystem(void){
 void CallInISR(void){
 
     TIMERCOUNT++;
+    TIME_MEASURE++;
 
 
 }

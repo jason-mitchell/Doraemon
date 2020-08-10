@@ -11,6 +11,8 @@
 // Definitions
 //--------------------
 
+unsigned int TIME_MEASURE;
+
 // Function Prototypes
 //--------------------
 void Delay(unsigned int delay);
